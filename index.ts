@@ -9,13 +9,12 @@ function* alternate<First extends ArrayLike<any>, Second extends ArrayLike<any>>
     }
 }
 
-const getRegex = () => /\s*@(\w+)\s*=\s*([^\n]+)/g;
+const CONFIG_REGEX = /\s*@(\w+)\s*=\s*([^\n]+)/g;
 export function getConfigMap(config: string): Record<string, string[] | string> {
-    const regex = getRegex()
     const result: Record<string, string[] | string> = {};
 
     let match;
-    while ((match = regex.exec(config)) !== null) {
+    while ((match = CONFIG_REGEX.exec(config)) !== null) {
         const key = match[1];
         const values = match[2].trim().split(/\s+/).filter(e => e);
         result[key] = !values.length ? [] : values.length === 1 ? values[0] : values;
@@ -147,22 +146,22 @@ export function compileConfig(configString: string): ReindentConfig {
     return configMap
 }
 
-const allEmpty = /^\s*$/g
-const spaceStarts = /^(\s)+/
-function countSpaceStart(e: string) { return e.match(spaceStarts)?.[0]?.length ?? 0 }
+const ALL_EMPTY = /^\s*$/
+const SPACE_STARTS = /^(\s)+/
+function countSpaceStart(e: string) { return e.match(SPACE_STARTS)?.[0]?.length ?? 0 }
 export function reindent(input: string, config: ReindentConfig): string {
     const lines = input.split("\n");
     const trims = new Set(Array.isArray(config.trim) ? config.trim : [config.trim])
     if (trims.has("all-once") || trims.has("head-once")) {
-        if (lines[0]?.match(allEmpty)) lines.shift()
+        if (lines[0]?.match(ALL_EMPTY)) lines.shift()
     } else if (trims.has("all") || trims.has("head")) {
-        while (lines[0]?.match(allEmpty)) lines.shift()
+        while (lines[0]?.match(ALL_EMPTY)) lines.shift()
     }
 
     if (trims.has("all-once") || trims.has("tail-once")) {
-        if (lines.at(-1)?.match(allEmpty)) lines.pop()
+        if (lines.at(-1)?.match(ALL_EMPTY)) lines.pop()
     } else if (trims.has("all") || trims.has("tail")) {
-        while (lines.at(-1)?.match(allEmpty)) lines.pop()
+        while (lines.at(-1)?.match(ALL_EMPTY)) lines.pop()
     }
 
 
@@ -182,35 +181,26 @@ export function isConfig(value: any): value is ReindentConfig {
 }
 
 export function makeTemplator(config: ReindentConfig): Templator {
-    return function s(template, ...values) {
+    return (template: TemplateStringsArray, ...values: any[]): string => {
         const text = [...alternate(template, values.map(String))].join("")
         return reindent(text, config)
     }
 }
 
 export type Templator = (arr: TemplateStringsArray, ...values: any[]) => string
-export function s(config: ReindentConfig): Templator
-export function s(template: TemplateStringsArray, ...values: any[]): string 
-export function s(configOrTemplate: ReindentConfig | TemplateStringsArray, ...values: any) {
-    if (isConfig(configOrTemplate)) {
-        return makeTemplator(configOrTemplate)
-    }
-    const template = configOrTemplate
-    const first = template[0].split("\n")
-    const regex = getRegex()
-    const reduced = first.reduce((a, shifted) => {
+function parseTemplateConfig(templateLines: string[]): { template: string[], configStrings: string[] } {
+    const reduced = templateLines.reduce((a, shifted) => {
         if (a.done) {
             a.template.push(shifted)
             return a
         }
 
-        // is empty line, no need to care about configs
         if (!shifted.trim()) {
             a.template.push(shifted)
             return a
         }
 
-        if (!shifted.match(regex)) {
+        if (!shifted.match(CONFIG_REGEX)) {
             a.template.push(shifted)
             a.done = true
             return a
@@ -225,9 +215,26 @@ export function s(configOrTemplate: ReindentConfig | TemplateStringsArray, ...va
         done: false,
     })
 
-    const configString = reduced.configStrings.join('\n')
+    return {
+        template: reduced.template,
+        configStrings: reduced.configStrings
+    }
+}
+
+export function s(config: ReindentConfig): Templator
+export function s(template: TemplateStringsArray, ...values: any[]): string 
+export function s(configOrTemplate: ReindentConfig | TemplateStringsArray, ...values: any) {
+    if (isConfig(configOrTemplate)) {
+        return makeTemplator(configOrTemplate)
+    }
+    
+    const template = configOrTemplate
+    const first = template[0].split("\n")
+    const { template: templateLines, configStrings } = parseTemplateConfig(first)
+
+    const configString = configStrings.join('\n')
     const config = compileConfig(configString)
-    const joined = [reduced.template.join("\n"), ...alternate(values.map(String), template.slice(1))].join("")
+    const joined = [templateLines.join("\n"), ...alternate(values.map(String), template.slice(1))].join("")
     return reindent(joined, config)
 }
 

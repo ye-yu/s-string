@@ -1,7 +1,7 @@
 {
   "name": "s-string-indent",
   "version": "1.0.0",
-  "description": "",
+  "description": "Apply indentation using tag string",
   "main": "index.js",
   "types": "index.d.ts",
   "type": "module",

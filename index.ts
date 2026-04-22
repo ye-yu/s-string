@@ -1,4 +1,4 @@
-function* alternate<First extends any[], Second extends any[]>(first: First, second: Second): Generator<any[]> {
+function* alternate<First extends ArrayLike<any>, Second extends ArrayLike<any>>(first: First, second: Second): Generator<any[]> {
     for (let i = 0, j = 0; i < first.length || j < second.length;) {
         if (i < first.length) {
             yield first[i++];
@@ -177,9 +177,25 @@ export function reindent(input: string, config: ReindentConfig): string {
     return lines.map(mapper).join('\n')
 }
 
+export function isConfig(value: any): value is ReindentConfig {
+    return typeof value === "object" && "space" in value && "trim" in value
+}
 
-export function s(template: TemplateStringsArray, ...values: any[]) {
-    console.log({ arguments: arguments })
+export function makeTemplator(config: ReindentConfig): Templator {
+    return function s(template, ...values) {
+        const text = [...alternate(template, values.map(String))].join("")
+        return reindent(text, config)
+    }
+}
+
+export type Templator = (arr: TemplateStringsArray, ...values: any[]) => string
+export function s(config: ReindentConfig): Templator
+export function s(template: TemplateStringsArray, ...values: any[]): string 
+export function s(configOrTemplate: ReindentConfig | TemplateStringsArray, ...values: any) {
+    if (isConfig(configOrTemplate)) {
+        return makeTemplator(configOrTemplate)
+    }
+    const template = configOrTemplate
     const first = template[0].split("\n")
     const regex = getRegex()
     const reduced = first.reduce((a, shifted) => {
@@ -215,17 +231,4 @@ export function s(template: TemplateStringsArray, ...values: any[]) {
     return reindent(joined, config)
 }
 
-function makeTemplate(strings: string[]): TemplateStringsArray {
-    const frozen = Object.freeze(strings)
-    return Object.defineProperty(frozen, "raw", {
-        get() {
-            return strings
-        }
-    }) as TemplateStringsArray
-}
-
-s.spaceAuto = function spaceAuto([first, ...templates]: TemplateStringsArray, values: []) {
-    const raw = [`@space = auto\n${first}`, ...templates]
-    const template = makeTemplate(raw)
-    return s(template, values)
-}
+export default s

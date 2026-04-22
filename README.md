@@ -1,11 +1,11 @@
-# ts-reindent
+# s-string-indent
 
 A TypeScript library for reindenting multi-line strings with configurable space and trim options.
 
 ## Installation
 
 ```sh
-npm install ts-reindent
+npm install s-string-indent
 ```
 
 ## Usage
@@ -15,7 +15,7 @@ npm install ts-reindent
 The `s` function is a tagged template literal that allows you to specify reindentation configuration directly in the template string.
 
 ```typescript
-import { s } from 'ts-reindent';
+import { s } from 's-string-indent';
 
 const result = s`
     @space = auto
@@ -27,7 +27,15 @@ const result = s`
 `;
 
 console.log(result);
-// Output: "hello world\nthis is nice\n    let's put a new line\nand then we back again"
+```
+
+Output
+
+```md
+hello world
+this is nice
+    let's put a new line
+and then we back again
 ```
 
 #### Configuration Options
@@ -44,12 +52,43 @@ console.log(result);
   - `all`: Remove empty lines from both ends.
   - `head-once`, `tail-once`, `all-once`: Remove only one empty line from the respective positions.
 
+### Using the `s` function with a config object
+
+You can create a templator function by passing a configuration object to `s`.
+
+```typescript
+import { s } from 's-string-indent';
+
+const templator = s({
+    space: 'auto',
+    trim: 'all'
+});
+
+const result = templator`
+    hello world
+    this is nice
+        let's put a new line
+    and then we back again
+`;
+
+console.log(result);
+```
+
+Output
+
+```md
+hello world
+this is nice
+    let's put a new line
+and then we back again
+```
+
 ### Using the `reindent` function
 
 For programmatic usage, you can use the `reindent` function directly.
 
 ```typescript
-import { reindent } from 'ts-reindent';
+import { reindent } from 's-string-indent';
 
 const input = `
     hello world
@@ -63,5 +102,11 @@ const config = {
 
 const result = reindent(input, config);
 console.log(result);
-// Output: "hello world\nthis is nice"
+```
+
+Output
+
+```md
+hello world
+this is nice
 ```

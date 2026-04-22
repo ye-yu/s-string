@@ -228,3 +228,22 @@ describe("s``", () => {
         assert.equal(actual, expected, new Error("not equal", { cause: { actual, expected } }));
     })
 })
+
+describe('s()', () => {
+    it("should interpolate string with indent configuration", () => {
+        const r = s({
+            space: "auto",
+            trim: "all"
+        })
+
+        const data = ["string", 1, true, [], {}]
+        const actual = r`
+            hello world
+            this is nice
+            ${data[0]} ${data[1]} ${data[2]} ${data[3]} ${data[5]}
+        `;
+
+        const expected = `hello world\nthis is nice\n${data[0]} ${data[1]} ${data[2]} ${data[3]} ${data[5]}`;
+        assert.equal(actual, expected, new Error("not equal", { cause: { actual, expected } }));
+    })
+})

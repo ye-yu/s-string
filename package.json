@@ -1,0 +1,24 @@
+{
+  "name": "node-typescript-no-transpiler-template",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ye-yu/node-typescript-no-transpiler-template.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ye-yu/node-typescript-no-transpiler-template/issues"
+  },
+  "homepage": "https://github.com/ye-yu/node-typescript-no-transpiler-template#readme",
+  "dependencies": {
+    "@types/node": "^25.0.3"
+  }
+}

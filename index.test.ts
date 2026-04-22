@@ -213,4 +213,18 @@ describe("s``", () => {
         const expected = "hello world\nthis is nice\n    let's put a new line\nbut then we reverse back again";
         assert.equal(actual, expected, new Error("not equal", { cause: { actual, expected } }));
     })
+
+    it('should still interpolate variables correctly', () => {
+        const data = ["string", 1, true, [], {}]
+        const actual = s`
+            @space = auto
+            @trim = all
+            hello world
+            this is nice
+            ${data[0]} ${data[1]} ${data[2]} ${data[3]} ${data[5]}
+        `;
+
+        const expected = `hello world\nthis is nice\n${data[0]} ${data[1]} ${data[2]} ${data[3]} ${data[5]}`;
+        assert.equal(actual, expected, new Error("not equal", { cause: { actual, expected } }));
+    })
 })

@@ -1,14 +1,13 @@
 function* alternate<First extends any[], Second extends any[]>(first: First, second: Second): Generator<any[]> {
-    while (first.length || second.length) {
-        if (first.length) {
-            yield first.shift()
+    for (let i = 0, j = 0; i < first.length || j < second.length;) {
+        if (i < first.length) {
+            yield first[i++];
         }
-        if (second.length) {
-            yield second.shift()
+        if (j < second.length) {
+            yield second[j++];
         }
     }
 }
-
 
 const getRegex = () => /\s*@(\w+)\s*=\s*([^\n]+)/g;
 export function getConfigMap(config: string): Record<string, string[] | string> {
@@ -179,7 +178,8 @@ export function reindent(input: string, config: ReindentConfig): string {
 }
 
 
-export function s(template: TemplateStringsArray, values?: any[]) {
+export function s(template: TemplateStringsArray, ...values: any[]) {
+    console.log({ arguments: arguments })
     const first = template[0].split("\n")
     const regex = getRegex()
     const reduced = first.reduce((a, shifted) => {
@@ -211,7 +211,7 @@ export function s(template: TemplateStringsArray, values?: any[]) {
 
     const configString = reduced.configStrings.join('\n')
     const config = compileConfig(configString)
-    const joined = [...alternate([...reduced.template, ...template.slice(1)], values ?? [])].join("\n")
+    const joined = [reduced.template.join("\n"), ...alternate(values.map(String), template.slice(1))].join("")
     return reindent(joined, config)
 }
 

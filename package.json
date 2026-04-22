@@ -1,25 +1,39 @@
 {
   "name": "s-string-indent",
-  "version": "1.0.0-beta",
+  "version": "1.0.0-beta.1",
   "description": "",
-  "main": "index.ts",
+  "main": "index.js",
+  "types": "index.d.ts",
   "type": "module",
-  "files": ["index.ts", "tsconfig.json"],
+  "files": [
+    "index.js",
+    "index.d.ts"
+  ],
   "scripts": {
-    "test": "node --test"
+    "test": "node --test",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ye-yu/s-string-indent.git"
   },
-  "keywords": [],
+  "keywords": [
+    "string",
+    "indentation",
+    "reindent",
+    "formatting",
+    "template-literal"
+  ],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/ye-yu/s-string-indent/issues"
   },
   "homepage": "https://github.com/ye-yu/s-string-indent#readme",
   "dependencies": {
     "@types/node": "^22.19.17"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
   }
 }

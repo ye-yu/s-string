@@ -10,6 +10,8 @@ dist/
 build/
 out/
 !.gitkeep
+*.js
+*.d.ts
 
 # TypeScript
 *.tsbuildinfo

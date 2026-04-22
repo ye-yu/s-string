@@ -1,24 +1,25 @@
 {
-  "name": "node-typescript-no-transpiler-template",
-  "version": "1.0.0",
+  "name": "s-string-indent",
+  "version": "1.0.0-beta",
   "description": "",
   "main": "index.ts",
   "type": "module",
+  "files": ["index.ts", "tsconfig.json"],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ye-yu/node-typescript-no-transpiler-template.git"
+    "url": "git+https://github.com/ye-yu/s-string-indent.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ye-yu/node-typescript-no-transpiler-template/issues"
+    "url": "https://github.com/ye-yu/s-string-indent/issues"
   },
-  "homepage": "https://github.com/ye-yu/node-typescript-no-transpiler-template#readme",
+  "homepage": "https://github.com/ye-yu/s-string-indent#readme",
   "dependencies": {
-    "@types/node": "^25.0.3"
+    "@types/node": "^22.19.17"
   }
 }

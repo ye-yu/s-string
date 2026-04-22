@@ -1,9 +1,4 @@
 {
-    "compilerOptions": {
-        "target": "esnext",
-        "module": "nodenext",
-        "rewriteRelativeImportExtensions": true,
-        "erasableSyntaxOnly": true,
-        "verbatimModuleSyntax": true,
-    }
+    "extends": "./tsconfig.base.json",
+    "files": ["./index.ts"]
 }
